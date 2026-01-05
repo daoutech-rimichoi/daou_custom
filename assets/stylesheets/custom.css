@@ -96,3 +96,28 @@ p#change_author {
 .issue > p.author {
     display: none;
 }
+
+/* 일감 목록 - 가로 길이 고정 */
+.list.issues th.status {
+    width: 45px;
+}
+
+.list.issues th.priority {
+    width: 60px;
+}
+
+.list.issues th.created_on, .list.issues th.updated_on, .list.issues th.closed_on {
+    width: 105px;
+}
+
+.list.issues th.due_date {
+    width: 70px;
+}
+
+.list.issues th.hide-when-print {
+    width: 20px;
+}
+
+.list.issues th.author, .list.issues th.assigned_to {
+    width: 185px;
+}
