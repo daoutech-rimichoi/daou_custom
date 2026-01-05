@@ -1,0 +1,98 @@
+/* 폰트 설정 */
+body, div, p, span, a, input, select, textarea, h1, h2, h3, h4, h5, h6 {
+    font-family: "Malgun Gothic", "맑은 고딕", "Apple SD Gothic Neo", "Nanum Gothic", "나눔고딕", sans-serif, "Font Awesome 5 Free" !important;
+}
+
+/* 일감 상태 뱃지 스타일 (Modern Solid Badge) 적용 대상: .status-badge (span 태그) */
+.status-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.2;
+    color: #fff !important;
+    vertical-align: middle;
+    margin-top: 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* 상태별 색상 매핑 (Redmine 기본 status ID 및 커스텀 클래스 지원) */
+
+/* 1. 신규 (New) - 파란색 계열 */
+.status-badge.status-new,
+.status-badge.status-1 {
+    background-color: #4A90E2;
+    border-color: #357ABD;
+}
+
+/* 2. 진행 (In Progress) - 초록색 계열 */
+.status-badge.status-inprogress,
+.status-badge.status-2 {
+    background-color: #4CAF50;
+    border-color: #388E3C;
+}
+
+/* 3. 완료 (Complete/Closed) - 회색/블루그레이 계열 */
+.status-badge.status-complete,
+.status-badge.status-closed,
+.status-badge.status-3,
+.status-badge.status-5 {
+    background-color: #78909C;
+    border-color: #546E7A;
+}
+
+/* 4. 보류 (On Hold) - 주황색 계열 */
+.status-badge.status-on-hold,
+.status-badge.status-4,
+.status-badge.status-6 {
+    background-color: #FF9800;
+    border-color: #F57C00;
+}
+
+/* 기본값 (매칭되는 클래스가 없을 때) */
+.status-badge:not([class*="status-"]) {
+    background-color: #9E9E9E;
+}
+
+/* Critical 우선순위 (ID 4 가정)의 행 배경색을 분홍색으로 변경 */
+tr.priority-4, tr.priority-5 {
+    background-color: #ffcccc !important; /* 연한 분홍색 (원하는 색상으로 변경) */
+}
+
+/* 마우스 호버 시 기본 하이라이트 색상도 유지되도록 설정 (선택사항) */
+tr.priority-4:hover, tr.priority-5:hover {
+    background-color: #ffaaaa !important;
+}
+
+/* 상단 헤더 로고 */
+#header > h1 {
+    background-size: 44px 30px;
+    background-image: url(../images/redmine-logo.png);
+    background-repeat: no-repeat;
+    background-position: 5px 10px;
+    padding: 10px 55px;
+}
+
+/* 일감 - 작성자 변경 옵션 숨기기 */
+p#change_author {
+    display: none;
+}
+
+/* 일감 - 제목 왼쪽 여백 제거 */
+.issue.details > .subject {
+    padding-left: 0;
+}
+
+/* 일감 - 나에게 할당 글씨 크기 조정 */
+.assign-to-me-link {
+    font-size: 13px;
+}
+
+/* 일감 - 제목 아래 등록자 제거 */
+.issue > p.author {
+    display: none;
+}

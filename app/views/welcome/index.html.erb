@@ -1,0 +1,216 @@
+<%# 초기화면 재정의 %>
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'welcome_dashboard', :plugin => 'daou_custom' %>
+  <%= javascript_include_tag "chart.umd.min.js", :plugin => 'daou_custom' %>
+  <%= javascript_include_tag "chartjs-plugin-datalabels.min.js", :plugin => 'daou_custom' %>
+<% end %>
+
+<!-- 상단 통합 포털 섹션 -->
+<%= Setting.welcome_text.html_safe %>
+
+<!-- 하단 프로젝트 현황 차트 -->
+<h2 class="dashboard-main-title">📊 프로젝트별 이슈처리 현황</h2>
+
+<!-- 날짜 검색 폼 추가 -->
+<div class="date-filter-container">
+  <% default_start = (Date.today - 1.year).strftime('%Y-%m-%d') %>
+  <% default_end = Date.today.strftime('%Y-%m-%d') %>
+  <% current_start = params[:start_date].presence || default_start %>
+  <% current_end = params[:end_date].presence || default_end %>
+
+  <form class="date-filter-form" method="get">
+    <div class="filter-item">
+      <label for="start_date">시작일</label>
+      <input class="datepicker-input" type="date" id="start_date" name="start_date" value="<%= current_start %>" onkeydown="return false" onclick="this.showPicker()">
+    </div>
+    <span class="filter-separator">~</span>
+    <div class="filter-item">
+      <label for="end_date">종료일</label>
+      <input class="datepicker-input" type="date" id="end_date" name="end_date" value="<%= current_end %>" onkeydown="return false" onclick="this.showPicker()">
+    </div>
+    <button class="filter-submit-btn" type="submit">조회</button>
+    <% if params[:start_date].present? || params[:end_date].present? %>
+      <a class="filter-reset-link" href="<%= request.path %>">초기화</a>
+    <% end %>
+  </form>
+
+  <div class="filter-info">
+    <span class="filter-info-icon">ℹ️</span>
+    일감의 <strong>생성일</strong> 기준 검색 (최대 365일)
+  </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var startDateInput = document.getElementById('start_date');
+        var endDateInput = document.getElementById('end_date');
+
+        function addDays(date, days) {
+            var result = new Date(date);
+            result.setDate(result.getDate() + days);
+            return result;
+        }
+
+        function formatDate(date) {
+            var year = date.getFullYear();
+            var month = (date.getMonth() + 1).toString().padStart(2, '0');
+            var day = date.getDate().toString().padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        function updateConstraints() {
+            var startVal = startDateInput.value ? new Date(startDateInput.value) : null;
+            var endVal = endDateInput.value ? new Date(endDateInput.value) : null;
+
+            if (startVal) {
+                // 종료일의 최소값은 시작일
+                endDateInput.min = formatDate(startVal);
+                // 종료일의 최대값은 시작일 + 365일
+                endDateInput.max = formatDate(addDays(startVal, 365));
+            }
+
+            if (endVal) {
+                // 시작일의 최대값은 종료일
+                startDateInput.max = formatDate(endVal);
+                // 시작일의 최소값은 종료일 - 365일
+                startDateInput.min = formatDate(addDays(endVal, -365));
+            }
+        }
+
+        startDateInput.addEventListener('change', updateConstraints);
+        endDateInput.addEventListener('change', updateConstraints);
+
+        // 초기 로드 시 제약조건 적용
+        updateConstraints();
+    });
+</script>
+
+<div class="dashboard-container">
+  <% projects = Project.visible.sorted %>
+  <% def find_status(names)
+       ; IssueStatus.where(name: names).first;
+     end %>
+  <% status_new = find_status(['신규', 'New']) %>
+  <% status_in_progress = find_status(['진행', 'In Progress']) %>
+  <% status_closed = find_status(['완료', 'Closed']) %>
+  <% status_on_hold = find_status(['보류', 'On Hold']) %>
+  <% display_statuses = [status_new, status_in_progress, status_closed, status_on_hold] %>
+
+  <% if projects.any? %>
+    <% projects.each do |project| %>
+      <div class="project-card">
+        <div class="project-title" title="<%= project.name %>">
+          <%= link_to_project project %>
+        </div>
+
+        <% scope = Issue.visible.where(project_id: project.id) %>
+        <% filter_start = params[:start_date].presence || default_start %>
+        <% filter_end = params[:end_date].presence || default_end %>
+        <% scope = scope.where("issues.created_on >= ?", filter_start.to_date.beginning_of_day) %>
+        <% scope = scope.where("issues.created_on <= ?", filter_end.to_date.end_of_day) %>
+        <% issue_counts = scope.group(:status_id).count %>
+        <% total_count = issue_counts.values.sum %>
+        <% chart_labels = [] %>
+        <% chart_data = [] %>
+        <% chart_colors = [] %>
+        <% status_color_map = { '신규' => '#4A90E2', '진행' => '#4CAF50', '완료' => '#7F7F7F', '보류' => '#FF9800' } %>
+
+        <% IssueStatus.sorted.each_with_index do |status, index| %>
+          <% count = issue_counts[status.id] || 0 %>
+          <% if count > 0 %>
+            <% chart_labels << "#{status.name} (#{count})" %>
+            <% chart_data << count %>
+            <% color = status_color_map[status.name] || "hsl(#{index * 137.5 % 360}, 70%, 60%)" %>
+            <% chart_colors << color %>
+          <% end %>
+        <% end %>
+
+        <div class="chart-section">
+          <% if total_count > 0 %>
+            <canvas id="chart-<%= project.id %>"></canvas>
+          <% else %>
+            <p class="no-data-msg">데이터 없음</p>
+          <% end %>
+        </div>
+
+        <table class="stats-table">
+          <thead>
+          <tr>
+            <th>합계</th>
+            <th>신규</th>
+            <th>진행</th>
+            <th>완료</th>
+            <th>보류</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>
+              <%= link_to total_count, project_issues_path(project, set_filter: 1), class: 'clickable-count' %>
+            </td>
+            <% display_statuses.each do |status| %>
+              <td>
+                <% if status %>
+                  <% count = issue_counts[status.id] || 0 %>
+                  <% if count > 0 %>
+                    <%= link_to count, project_issues_path(project, set_filter: 1, status_id: status.id), class: 'clickable-count' %>
+                  <% else %>
+                    <span style="color: #ccc;">-</span>
+                  <% end %>
+                <% else %>
+                  <span style="color: #eee;">-</span>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+          </tbody>
+        </table>
+
+        <% if total_count > 0 %>
+          <script>
+              (function () {
+                  const ctx = document.getElementById('chart-<%= project.id %>').getContext('2d');
+                  new Chart(ctx, {
+                      type: 'pie',
+                      data: {
+                          labels: <%= raw chart_labels.to_json %>,
+                          datasets: [{
+                              data: <%= raw chart_data.to_json %>,
+                              backgroundColor: <%= raw chart_colors.to_json %>,
+                              borderWidth: 1
+                          }]
+                      },
+                      options: {
+                          responsive: true,
+                          maintainAspectRatio: false,
+                          plugins: {
+                              legend: {
+                                  position: 'right',
+                                  labels: {
+                                      boxWidth: 10,
+                                      font: {size: 10}
+                                  }
+                              },
+                              datalabels: {
+                                  color: '#fff',
+                                  font: {
+                                      weight: 'bold',
+                                      size: 11
+                                  },
+                                  formatter: (value, ctx) => {
+                                      return value;
+                                  }
+                              }
+                          }
+                      },
+                      plugins: [ChartDataLabels]
+                  });
+              })();
+          </script>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p>표시할 프로젝트가 없습니다.</p>
+  <% end %>
+</div>

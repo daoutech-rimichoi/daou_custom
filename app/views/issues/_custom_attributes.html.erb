@@ -1,0 +1,30 @@
+<%# 등록자,생성일,변경일,종료일 추가 %>
+<div class="splitcontent">
+  <div class="splitcontentleft">
+    <div class="author attribute">
+      <div class="label"><span><%= l(:field_author) %></span>:</div>
+      <div class="value"><%= link_to_user(@issue.author, :class => 'user active') %></div>
+    </div>
+  </div>
+  <div class="splitcontentleft">
+    <div class="created_on attribute">
+      <div class="label"><span><%= l(:field_created_on) %></span>:</div>
+      <div class="value"><%= format_time(@issue.created_on) %></div>
+    </div>
+  </div>
+</div>
+<div class="splitcontent">
+  <div class="splitcontentleft">
+    <div class="updated_on attribute">
+      <div class="label"><span><%= l(:field_updated_on) %></span>:</div>
+      <div class="value"><%= (@issue.updated_on ? format_time(@issue.updated_on) : "-") %></div>
+    </div>
+  </div>
+  <div class="splitcontentleft">
+    <div class="closed_on attribute">
+      <div class="label"><span><%= l(:field_closed_on) %></span>:</div>
+      <div class="value"><%= (@issue.closed_on ? format_time(@issue.closed_on) : "-") %></div>
+    </div>
+  </div>
+</div>
+<%# 추가 끝 %>
