@@ -46,14 +46,29 @@ body, div, p, span, a, input, select, textarea, h1, h2, h3, h4, h5, h6 {
     background-color: #9E9E9E;
 }
 
-/* Critical 우선순위 (ID 4 가정)의 행 배경색을 분홍색으로 변경 */
-tr.priority-4, tr.priority-5 {
-    background-color: #ffcccc !important; /* 연한 분홍색 (원하는 색상으로 변경) */
+/* Critical 우선순위의 행을 강조 */
+tr.priority-3 {
+    background-color: #ffebeb !important;
 }
 
-/* 마우스 호버 시 기본 하이라이트 색상도 유지되도록 설정 (선택사항) */
-tr.priority-4:hover, tr.priority-5:hover {
-    background-color: #ffaaaa !important;
+tr.priority-3:hover {
+    background-color: #ffdce0 !important;
+}
+
+tr.priority-4 {
+    background-color: #ffc9c9 !important;
+}
+
+tr.priority-4:hover {
+    background-color: #ffb5b5 !important;
+}
+
+tr.priority-5 {
+    background-color: #ff9e9e !important;
+}
+
+tr.priority-5:hover {
+    background-color: #ff8a8a !important;
 }
 
 /* 상단 헤더 로고 */
