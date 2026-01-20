@@ -10,8 +10,14 @@ Redmine::Plugin.register :daou_view_custom do
   author_url 'mailto:rimichoi@daou.co.kr'
 end
 
-# Rails 초기화 및 리로드(개발 모드) 시 실행
-Rails.configuration.to_prepare do
+apply_patches = -> do
+  load File.expand_path('../lib/daou_view_custom/application_helper_patch.rb', __FILE__)
+  load File.expand_path('../lib/daou_view_custom/issue_patch.rb', __FILE__)
+  load File.expand_path('../lib/daou_view_custom/queries_helper_patch.rb', __FILE__)
+  load File.expand_path('../lib/daou_view_custom/project_patch.rb', __FILE__)
+  load File.expand_path('../lib/daou_view_custom/projects_helper_patch.rb', __FILE__)
+  load File.expand_path('../lib/daou_view_custom/issue_fields_rows_patch.rb', __FILE__)
+
   # ApplicationHelper 패치
   unless ApplicationHelper.ancestors.include?(DaouViewCustom::ApplicationHelperPatch)
     ApplicationHelper.prepend(DaouViewCustom::ApplicationHelperPatch)
@@ -43,4 +49,12 @@ Rails.configuration.to_prepare do
       IssuesHelper::IssueFieldsRows.prepend(DaouViewCustom::IssueFieldsRowsPatch)
     end
   end
+end
+
+# 1. 즉시 실행 (부팅 시 적용)
+apply_patches.call
+
+# 2. 리로드 시 실행 (개발 모드 대응)
+Rails.configuration.to_prepare do
+  apply_patches.call
 end
