@@ -42,7 +42,7 @@
 - **OS**: Windows (Docker Desktop)
 - **Docker Compose**: 2.40.3
 - **Redmine**: 6.0.6
-- **Ruby**: 3.3.9
+- **Ruby**: 3.2.9
 - **Puma**: 7.0.1
 - **Rails**: 7.2.2.1
 
