@@ -1,4 +1,6 @@
-module DaouCustom
+# frozen_string_literal: true
+
+module DaouViewCustom
   module QueriesHelperPatch
     # 일감 목록에 상태 컬럼의 내용을 상태 배지로 감싸서 출력
     def column_content(column, item)

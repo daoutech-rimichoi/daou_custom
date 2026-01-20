@@ -1,4 +1,6 @@
-module DaouCustom
+# frozen_string_literal: true
+
+module DaouViewCustom
   class DashboardStatsService
     attr_reader :params
 

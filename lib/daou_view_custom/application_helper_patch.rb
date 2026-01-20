@@ -1,4 +1,6 @@
-module DaouCustom
+# frozen_string_literal: true
+
+module DaouViewCustom
   module ApplicationHelperPatch
     # 프로젝트명 클릭 시 이슈 목록으로 이동하는 링크 생성
     def link_to_project(project, options={}, html_options=nil)

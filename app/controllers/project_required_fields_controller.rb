@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProjectRequiredFieldsController < ApplicationController
   before_action :find_project_by_project_id
 
@@ -12,7 +14,7 @@ class ProjectRequiredFieldsController < ApplicationController
     to_add = new_fields - current_fields
     to_remove = current_fields - new_fields
     
-    ProjectRequiredField.transaction do
+    DaouViewCustom::ProjectRequiredField.transaction do
       if to_remove.any?
         @project.project_required_fields.where(field_name: to_remove).destroy_all
       end

@@ -1,4 +1,6 @@
-module DaouCustom
+# frozen_string_literal: true
+
+module DaouViewCustom
   module IssueFieldsRowsPatch
     def cells(label, text, options={})
       # 'status' 클래스가 포함된 경우 (상태 필드)

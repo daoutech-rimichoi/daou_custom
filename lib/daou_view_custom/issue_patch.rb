@@ -1,11 +1,7 @@
-module DaouCustom
-  module IssuePatch
-    def self.prepended(base)
-      base.class_eval do
-        has_many :git_histories, dependent: :destroy
-      end
-    end
+# frozen_string_literal: true
 
+module DaouViewCustom
+  module IssuePatch
     # 프로젝트별 필수 필드 설정을 반영하여 필수 속성 목록을 반환
     def required_attribute_names(user=nil)
       names = super(user)

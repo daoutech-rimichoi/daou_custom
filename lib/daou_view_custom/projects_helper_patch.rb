@@ -1,4 +1,6 @@
-module DaouCustom
+# frozen_string_literal: true
+
+module DaouViewCustom
   module ProjectsHelperPatch
     def project_settings_tabs
       tabs = super

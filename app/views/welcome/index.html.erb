@@ -1,16 +1,16 @@
 <%# 초기화면 재정의 %>
 <% content_for :header_tags do %>
-  <%= stylesheet_link_tag 'welcome_dashboard', :plugin => 'daou_custom' %>
-  <%= javascript_include_tag "chart.umd.min.js", :plugin => 'daou_custom' %>
-  <%= javascript_include_tag "chartjs-plugin-datalabels.min.js", :plugin => 'daou_custom' %>
-  <%= javascript_include_tag "dashboard.js", :plugin => 'daou_custom' %>
+  <%= stylesheet_link_tag 'welcome_dashboard', :plugin => 'daou_view_custom' %>
+  <%= javascript_include_tag "chart.umd.min.js", :plugin => 'daou_view_custom' %>
+  <%= javascript_include_tag "chartjs-plugin-datalabels.min.js", :plugin => 'daou_view_custom' %>
+  <%= javascript_include_tag "dashboard.js", :plugin => 'daou_view_custom' %>
 <% end %>
 
 <% 
   # 서비스 객체 초기화
-  dashboard_service = DaouCustom::DashboardStatsService.new(params)
+  dashboard_service = DaouViewCustom::DashboardStatsService.new(params)
   projects = dashboard_service.target_projects
-  display_statuses = DaouCustom::DashboardStatsService.display_statuses
+  display_statuses = DaouViewCustom::DashboardStatsService.display_statuses
 %>
 
 <!-- 상단 통합 포털 섹션 -->
